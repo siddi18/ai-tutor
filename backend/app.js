@@ -21,15 +21,26 @@ mongoose.connect(config.MONGODB_URI).then(() => {
 .catch(error => console.log(`${error}`))
 
 const app = express()
-app.use(cors())
+
+// Configure CORS for production and development
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://ai-tutor-1k05.onrender.com', 'https://*.onrender.com'] 
+    : ['http://localhost:5173', 'http://localhost:5000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions))
 app.use(express.json())
 
 // API routes - MUST come before static file serving
 app.use('/api', routes);
 app.use("/api/users", userRoutes);
-app.use("/study-plan", studyPlanRoutes);
-app.use("/quiz", quizRoutes);
-app.use("/progress", progressRoutes);
+app.use("/api/study-plan", studyPlanRoutes);
+app.use("/api/quiz", quizRoutes);
+app.use("/api/progress", progressRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use("/api", require("./routes/testRoutes"));

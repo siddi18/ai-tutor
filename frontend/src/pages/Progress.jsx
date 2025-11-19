@@ -40,14 +40,20 @@ const ProgressPage = () => {
         return;
       }
 
-      try {
-        setIsLoading(true);
-        const response = await fetch(`http://localhost:5000/progress/${userId}`);
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-
-        // Map backend data to frontend-friendly format
+      try {
+        setIsLoading(true);
+        // Auto-detect API URL
+        const getApiUrl = () => {
+          if (window.location.hostname.includes('onrender.com')) {
+            return '/api';
+          }
+          return 'http://localhost:5000/api';
+        };
+        const API_URL = getApiUrl();
+        const response = await fetch(`${API_URL}/progress/${userId}`);
+        if (!response.ok)
+          throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();        // Map backend data to frontend-friendly format
         const mappedData = {
           completionRate: data.completionRate || 0,
           completedTopics: data.completedTopics || 0,

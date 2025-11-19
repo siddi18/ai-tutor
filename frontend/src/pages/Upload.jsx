@@ -152,8 +152,17 @@ export default function Upload() {
     formData.append("file", file.fileObject);
 
     try {
+      // Auto-detect API URL
+      const getApiUrl = () => {
+        if (window.location.hostname.includes('onrender.com')) {
+          return '/api';
+        }
+        return 'http://localhost:5000/api';
+      };
+      const API_URL = getApiUrl();
+      
       const response = await fetch(
-        `http://localhost:5000/api/upload-syllabus/${userId}`,
+        `${API_URL}/upload-syllabus/${userId}`,
         {
           method: "POST",
           body: formData,

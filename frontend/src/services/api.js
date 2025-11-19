@@ -1,6 +1,16 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000';
+// Auto-detect API URL based on environment
+const getApiBaseUrl = () => {
+  // In production (Render), use relative URL
+  if (window.location.hostname.includes('onrender.com')) {
+    return '';
+  }
+  // In development, use localhost
+  return 'http://localhost:5000';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Create axios instance for notifications
 const apiClient = axios.create({
@@ -31,11 +41,11 @@ class ApiService {
 
       let url;
       if (studyPlanId) {
-        url = `${API_BASE_URL}/study-plan/by-id/${studyPlanId}?t=${timestamp}`;
+        url = `${API_BASE_URL}/api/study-plan/by-id/${studyPlanId}?t=${timestamp}`;
       } else if (syllabusId) {
-        url = `${API_BASE_URL}/study-plan/${userId}/${syllabusId}?t=${timestamp}`;
+        url = `${API_BASE_URL}/api/study-plan/${userId}/${syllabusId}?t=${timestamp}`;
       } else {
-        url = `${API_BASE_URL}/study-plan/${userId}?t=${timestamp}`;
+        url = `${API_BASE_URL}/api/study-plan/${userId}?t=${timestamp}`;
       }
 
       const response = await fetch(url, {
@@ -64,7 +74,7 @@ class ApiService {
   async getAllTopics(userId) {
     try {
       console.log('Fetching all topics for user:', userId);
-      const response = await fetch(`${API_BASE_URL}/study-plan/topics/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/study-plan/topics/${userId}`, {
         method: 'GET',
         headers: { 
           'Content-Type': 'application/json',
@@ -92,7 +102,7 @@ class ApiService {
         throw new Error('userId and topicId are required');
       }
       
-      const response = await fetch(`${API_BASE_URL}/study-plan/complete`, {
+      const response = await fetch(`${API_BASE_URL}/api/study-plan/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, topicId }),
@@ -119,7 +129,7 @@ class ApiService {
         throw new Error('userId and topicId are required');
       }
       
-      const response = await fetch(`${API_BASE_URL}/study-plan/pending`, {
+      const response = await fetch(`${API_BASE_URL}/api/study-plan/pending`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, topicId }),
@@ -143,7 +153,7 @@ class ApiService {
     try {
       console.log('Fixing study plan for user:', userId);
       
-      const response = await fetch(`${API_BASE_URL}/study-plan/fix/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/study-plan/fix/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -174,7 +184,7 @@ class ApiService {
       });
       
       const response = await fetch(
-        `${API_BASE_URL}/quiz?${params.toString()}`,
+        `${API_BASE_URL}/api/quiz?${params.toString()}`,
         {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
@@ -202,7 +212,7 @@ class ApiService {
     try {
       console.log('Submitting quiz:', { userId, subject, topicId, answers });
       
-      const response = await fetch(`${API_BASE_URL}/quiz/submit`, {
+      const response = await fetch(`${API_BASE_URL}/api/quiz/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

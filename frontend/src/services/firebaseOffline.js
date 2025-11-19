@@ -39,8 +39,14 @@ export const auth = getAuth(app);
 export { onAuthStateChanged };
 const googleProvider = new GoogleAuthProvider();
 
-// API base URL for MongoDB backend
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+// API base URL for MongoDB backend - Auto-detect based on hostname
+const getApiBaseUrl = () => {
+  if (window.location.hostname.includes('onrender.com')) {
+    return '/api';
+  }
+  return 'http://localhost:5000/api';
+};
+const API_BASE_URL = getApiBaseUrl();
 
 /**
  * 🔄 Sync user with MongoDB

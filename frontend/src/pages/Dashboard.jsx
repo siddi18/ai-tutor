@@ -164,7 +164,15 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         console.log("Fetching dashboard data for user:", userId);
-        const res = await fetch(`http://localhost:5000/api/dashboard/${userId}`);
+        // Auto-detect API URL
+        const getApiUrl = () => {
+          if (window.location.hostname.includes('onrender.com')) {
+            return '/api';
+          }
+          return 'http://localhost:5000/api';
+        };
+        const API_URL = getApiUrl();
+        const res = await fetch(`${API_URL}/dashboard/${userId}`);
 
         if (!res.ok) {
           throw new Error(`Failed to fetch dashboard data: ${res.status}`);

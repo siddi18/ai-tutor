@@ -40,10 +40,35 @@ router.post("/sync", firebaseAuth, async (req, res) => {
         dailyStudyHours: dailyStudyHours || { startTime: "", endTime: "" }
       });
 
-      await user.save();
-      console.log("✅ New user created successfully:", user._id);
+      try {
+        await user.save();
+        console.log("✅ New user created successfully:", user._id);
+      } catch (saveError) {
+        // Handle duplicate key error (E11000)
+        if (saveError.code === 11000) {
+          console.log("⚠️ Duplicate key error, fetching existing user by email");
+          user = await User.findOne({ email });
+          if (!user) {
+            throw new Error("User creation failed and could not find existing user");
+          }
+          // Update firebaseUid if it was missing
+          if (user.firebaseUid !== uid) {
+            user.firebaseUid = uid;
+            await user.save();
+            console.log("✅ Updated existing user with Firebase UID");
+          }
+        } else {
+          throw saveError;
+        }
+      }
     } else {
       console.log("✅ User already exists:", user._id);
+      // Update profile picture if it changed
+      if (picture && user.profilePicture !== picture) {
+        user.profilePicture = picture;
+        await user.save();
+        console.log("✅ Updated user profile picture");
+      }
     }
 
     res.json(user);

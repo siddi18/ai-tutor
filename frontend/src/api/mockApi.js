@@ -1,4 +1,11 @@
-const API_BASE_URL = 'http://localhost:5000';
+// Auto-detect API URL based on environment
+const getApiBaseUrl = () => {
+  if (window.location.hostname.includes('onrender.com')) {
+    return '';
+  }
+  return 'http://localhost:5000';
+};
+const API_BASE_URL = getApiBaseUrl();
 
 export async function fetchNotifications(userId) {
   try {

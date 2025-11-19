@@ -71,7 +71,16 @@ function MockTest() {
       console.log("Fetching test for user:", userId);
       
       try {
-        const response = await fetch(`http://localhost:5000/api/mock-test?userId=${userId}`);
+        // Auto-detect API URL
+        const getApiUrl = () => {
+          if (window.location.hostname.includes('onrender.com')) {
+            return '/api';
+          }
+          return 'http://localhost:5000/api';
+        };
+        const API_URL = getApiUrl();
+        
+        const response = await fetch(`${API_URL}/mock-test?userId=${userId}`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -270,7 +279,16 @@ function MockTest() {
     });
 
     try {
-      const response = await fetch("http://localhost:5000/api/mock-test/submit", {
+      // Auto-detect API URL
+      const getApiUrl = () => {
+        if (window.location.hostname.includes('onrender.com')) {
+          return '/api';
+        }
+        return 'http://localhost:5000/api';
+      };
+      const API_URL = getApiUrl();
+      
+      const response = await fetch(`${API_URL}/mock-test/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
