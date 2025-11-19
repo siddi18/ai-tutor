@@ -1,0 +1,39 @@
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+package-lock.json
+.npm
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+.venv/
+.env
+
+# Build outputs
+frontend/dist/
+frontend/build/
+*.tsbuildinfo
+
+# Editor
+.vscode/
+.idea/
+
+# Uploads / temp files
+uploads/
+*.log
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+backend/serviceAccountKey.json
+
+# OS files
+.DS_Store
+Thumbs.db
