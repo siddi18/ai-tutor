@@ -54,10 +54,20 @@ const Profile = () => {
       const stored = getStoredMongoUser();
       console.log("📋 Fetching profile data. Stored user:", stored);
 
+      // Auto-detect API URL
+      const getApiUrl = () => {
+        const hostname = window.location.hostname;
+        if (hostname.includes('onrender.com')) {
+          return '/api';
+        }
+        return 'http://localhost:5000/api';
+      };
+      const API_URL = getApiUrl();
+
       // Prefer stored Mongo user id if available
       if (stored?._id) {
         console.log("🔍 Fetching user by MongoDB ID:", stored._id);
-        const response = await fetch(`http://localhost:5000/api/users/${stored._id}`);
+        const response = await fetch(`${API_URL}/users/${stored._id}`);
         if (!response.ok) {
           console.error("❌ Failed to fetch by ID, status:", response.status);
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -74,7 +84,7 @@ const Profile = () => {
       const token = await auth.currentUser?.getIdToken();
       if (token) {
         console.log("🔍 Using Firebase token to fetch user");
-        const response = await fetch("http://localhost:5000/api/users/me", {
+        const response = await fetch(`${API_URL}/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!response.ok) {
@@ -115,10 +125,20 @@ const Profile = () => {
       setLoading(true);
       const stored = getStoredMongoUser();
       console.log("stored: ",stored);
+      // Auto-detect API URL
+      const getApiUrl = () => {
+        const hostname = window.location.hostname;
+        if (hostname.includes('onrender.com')) {
+          return '/api';
+        }
+        return 'http://localhost:5000/api';
+      };
+      const API_URL = getApiUrl();
+
       let response;
       if (stored?._id) {
         // Update by Mongo _id if we have it cached
-        response = await fetch(`http://localhost:5000/api/users/${stored._id}`, {
+        response = await fetch(`${API_URL}/users/${stored._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
@@ -129,7 +149,7 @@ const Profile = () => {
         if (!token) {
           throw new Error("Not authenticated");
         }
-        response = await fetch("http://localhost:5000/api/users/me", {
+        response = await fetch(`${API_URL}/users/me`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

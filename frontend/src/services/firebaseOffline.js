@@ -45,35 +45,63 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 /**
  * 🔄 Sync user with MongoDB
  * Called after every login/register
+ * This ensures user data is stored in MongoDB immediately after authentication
  */
-const syncUserWithMongoDB = async (user, extraData = {}) => {
-  try {
-    console.log("🔄 Starting MongoDB sync for user:", user.uid);
-    const idToken = await user.getIdToken();
-    const response = await fetch(`${API_BASE_URL}/users/sync`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${idToken}`,
-      },
-      body: JSON.stringify(extraData),
-    });
+const syncUserWithMongoDB = async (user, extraData = {}, retries = 3) => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      console.log(`🔄 MongoDB sync attempt ${attempt}/${retries} for user:`, user.uid);
+      console.log('📤 Sending data:', extraData);
+      
+      const idToken = await user.getIdToken(true); // Force refresh token
+      const url = `${API_BASE_URL}/users/sync`;
+      console.log('🌐 Sync URL:', url);
+      
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify(extraData),
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("❌ MongoDB sync failed:", response.status, errorText);
-      throw new Error(`Failed to sync user with MongoDB: ${response.status}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`❌ MongoDB sync failed (attempt ${attempt}):`, response.status, errorText);
+        
+        // If it's the last attempt, throw the error
+        if (attempt === retries) {
+          throw new Error(`Failed to sync user with MongoDB: ${response.status} - ${errorText}`);
+        }
+        
+        // Wait before retrying (exponential backoff)
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        continue;
+      }
+
+      const data = await response.json();
+      console.log("✅ MongoDB sync successful:", data);
+      
+      // Store in localStorage immediately for fast access
+      localStorage.setItem("mongoUser", JSON.stringify(data));
+      console.log("💾 User data saved to localStorage");
+      
+      return data; // MongoDB user object
+    } catch (error) {
+      console.error(`❌ MongoDB sync error (attempt ${attempt}/${retries}):`, error);
+      
+      // If it's the last attempt, return null but log prominently
+      if (attempt === retries) {
+        console.error("❌ All sync attempts failed. User will need to refresh or try again.");
+        return null; // allow Firebase auth to still succeed
+      }
+      
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
     }
-
-    const data = await response.json();
-    console.log("✅ MongoDB sync successful:", data);
-    // Store in localStorage immediately
-    localStorage.setItem("mongoUser", JSON.stringify(data));
-    return data; // MongoDB user object
-  } catch (error) {
-    console.error("❌ MongoDB sync error:", error);
-    return null; // allow Firebase auth to still succeed
   }
+  return null;
 };
 
 /**
