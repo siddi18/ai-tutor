@@ -151,8 +151,17 @@ export default function Upload() {
     const formData = new FormData();
     formData.append("file", file.fileObject);
 
+    // Auto-detect API URL
+    const getApiUrl = () => {
+      if (window.location.hostname.includes('onrender.com')) {
+        return '/api';
+      }
+      return 'http://localhost:5000/api';
+    };
+    const API_URL = getApiUrl();
+
     try {
-      const API_URL ="https://tutor-flask-1.onrender.com/api";
+      console.log("Uploading to:", `${API_URL}/upload-syllabus/${userId}`);
       
       const response = await fetch(
         `${API_URL}/upload-syllabus/${userId}`,
@@ -162,8 +171,12 @@ export default function Upload() {
         }
       );
 
+      console.log("Response status:", response.status, response.statusText);
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error("Server response:", errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
       }
       
       const data = await response.json();
@@ -213,6 +226,12 @@ export default function Upload() {
       }, 100);
     } catch (err) {
       console.error("Error processing file:", err);
+      console.error("Full error details:", {
+        message: err.message,
+        stack: err.stack,
+        userId: userId,
+        apiUrl: getApiUrl()
+      });
       
       // Better error messages for common issues
       let errorMessage = err.message;
@@ -222,6 +241,10 @@ export default function Upload() {
         errorMessage = "⏱️ PDF too large. Try a smaller file (max 50 pages recommended).";
       } else if (err.message.includes('Failed to fetch')) {
         errorMessage = "🔌 Cannot reach server. Check if backend is running on port 5000.";
+      } else if (err.message.includes('NetworkError') || err.message.includes('network')) {
+        errorMessage = "🌐 Network error. Please check your internet connection.";
+      } else if (err.message.includes('HTTP error')) {
+        errorMessage = `Server error: ${err.message}. Please check if the backend server is running on port 5000.`;
       }
       
       setError(`❌ ${errorMessage}`);
