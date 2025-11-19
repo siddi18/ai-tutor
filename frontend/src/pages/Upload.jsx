@@ -230,7 +230,7 @@ export default function Upload() {
         message: err.message,
         stack: err.stack,
         userId: userId,
-        apiUrl: getApiUrl()
+        apiUrl: API_URL
       });
       
       // Better error messages for common issues
