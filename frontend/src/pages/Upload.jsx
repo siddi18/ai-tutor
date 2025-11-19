@@ -284,10 +284,10 @@ export default function Upload() {
       <div className="absolute inset-0 z-10" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}></div>
 
       {/* Carousel + Upload box */}
-      <div className="relative z-20 max-w-6xl mx-auto p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-          {/* Carousel */}
-          <div className="rounded-2xl overflow-hidden shadow-xl bg-white bg-opacity-80 backdrop-blur-md flex h-full">
+      <div className="relative z-20 max-w-6xl mx-auto p-3 sm:p-4 md:p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 items-stretch">
+          {/* Carousel - Hidden on mobile */}
+          <div className="hidden md:flex rounded-2xl overflow-hidden shadow-xl bg-white bg-opacity-80 backdrop-blur-md h-full">
             <Slider {...settings} className="w-full h-full">
               {images.map((src, index) => (
                 <div key={index} className="flex items-center justify-center w-full h-full">
@@ -298,32 +298,32 @@ export default function Upload() {
           </div>
 
           {/* Upload Section */}
-          <div className="flex flex-col items-center justify-center bg-white bg-opacity-90 backdrop-blur-md p-8 rounded-2xl shadow-xl h-full">
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Upload Your Files</h1>
-            <p className="text-gray-600 mb-6 text-center max-w-md">
+          <div className="flex flex-col items-center justify-center bg-white/20 backdrop-blur-lg p-4 sm:p-6 md:p-8 rounded-2xl shadow-xl border border-white/30 h-full">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-2">Upload Your Files</h1>
+            <p className="text-sm sm:text-base text-white/90 mb-4 sm:mb-6 text-center max-w-md px-2">
               Upload your syllabus or notes (PDF/DOCX). Your files will be stored securely for generating study plans and quizzes.
             </p>
 
             {/* Sample PDF Section */}
-            <div className="w-full max-w-lg mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">📄</span>
+            <div className="w-full max-w-lg mb-3 sm:mb-4 bg-white/10 backdrop-blur border border-white/20 rounded-xl p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-xl sm:text-2xl">📄</span>
                   <div>
-                    <p className="font-semibold text-gray-800">Need a sample syllabus?</p>
-                    <p className="text-xs text-gray-600">Try our Class 11 Biology syllabus</p>
+                    <p className="text-sm sm:text-base font-semibold text-white">Need a sample syllabus?</p>
+                    <p className="text-xs text-white/80">Try our Class 11 Biology syllabus</p>
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto">
                   <button
                     onClick={handleUseSamplePDF}
-                    className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-blue-500 text-white text-sm font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300"
+                    className="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-indigo-500 to-blue-500 text-white text-xs sm:text-sm font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300"
                   >
                     Use Sample
                   </button>
                   <button
                     onClick={handleDownloadSample}
-                    className="px-4 py-2 bg-white text-indigo-600 text-sm font-semibold rounded-lg border-2 border-indigo-500 hover:bg-indigo-50 hover:scale-105 transition-all duration-300"
+                    className="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 bg-white text-indigo-600 text-xs sm:text-sm font-semibold rounded-lg border-2 border-indigo-500 hover:bg-indigo-50 hover:scale-105 transition-all duration-300"
                   >
                     Download
                   </button>
@@ -331,29 +331,29 @@ export default function Upload() {
               </div>
             </div>
 
-            <div className="w-full max-w-lg">
+            <div className="w-full max-w-lg px-2 sm:px-0">
               {!file && (
-                <label className="flex flex-col items-center justify-center w-full h-56 border-2 border-dashed border-gray-400 rounded-xl cursor-pointer bg-gradient-to-br from-gray-50 to-gray-100 hover:border-indigo-500 hover:shadow-md transition-all duration-300">
-                  <span className="text-6xl mb-3">📂</span>
-                  <span className="text-gray-700 font-semibold">Click to upload or drag & drop</span>
-                  <span className="text-sm text-gray-400 mt-1">(PDF/DOCX only, max 5MB)</span>
+                <label className="flex flex-col items-center justify-center w-full h-40 sm:h-48 md:h-56 border-2 border-dashed border-white/40 rounded-xl cursor-pointer bg-white/10 backdrop-blur hover:border-white/60 hover:bg-white/20 hover:shadow-md transition-all duration-300">
+                  <span className="text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-3">📂</span>
+                  <span className="text-sm sm:text-base text-white font-semibold text-center px-4">Click to upload or drag & drop</span>
+                  <span className="text-xs sm:text-sm text-white/70 mt-1">(PDF/DOCX only, max 5MB)</span>
                   <input type="file" accept=".pdf,.docx" onChange={handleFileChange} className="hidden" />
                 </label>
               )}
 
-              {error && <p className="text-red-600 font-semibold mt-4 text-center">{error}</p>}
-              {success && <p className="text-green-600 font-semibold mt-4 text-center">{success}</p>}
+              {error && <p className="text-red-400 font-semibold mt-4 text-center bg-red-900/30 backdrop-blur px-4 py-2 rounded-lg border border-red-500/30">{error}</p>}
+              {success && <p className="text-green-400 font-semibold mt-4 text-center bg-green-900/30 backdrop-blur px-4 py-2 rounded-lg border border-green-500/30">{success}</p>}
 
               {file && (
-                <div className="mt-6 bg-white rounded-xl shadow-md p-6 border flex flex-col gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 flex items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 font-bold text-lg">
+                <div className="mt-4 sm:mt-6 bg-white/10 backdrop-blur-lg rounded-xl shadow-md p-4 sm:p-6 border border-white/20 flex flex-col gap-3 sm:gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-lg bg-indigo-500/30 backdrop-blur text-white font-bold text-sm sm:text-lg flex-shrink-0 border border-indigo-400/30">
                       {file.type === "application/pdf" ? "PDF" : "DOCX"}
                     </div>
 
-                    <div>
-                      <p className="font-semibold text-gray-800">{file.name}</p>
-                      <p className="text-sm text-gray-500">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm sm:text-base text-white truncate">{file.name}</p>
+                      <p className="text-xs sm:text-sm text-white/70">
                         {(file.size / 1024 / 1024).toFixed(2)} MB •{" "}
                         {file.type === "application/pdf" ? "PDF Document" : "Word Document"}
                       </p>
@@ -378,11 +378,11 @@ export default function Upload() {
                     </div>
                   )}
 
-                  <div className="flex gap-3 self-end mt-3">
+                  <div className="flex gap-2 sm:gap-3 self-end mt-2 sm:mt-3">
                     <button
                       onClick={handleUpload}
                       disabled={isUploading}
-                      className={`px-5 py-2 rounded-full text-sm font-semibold shadow-md flex items-center gap-2 transition-all duration-300 ${
+                      className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold shadow-md flex items-center gap-1 sm:gap-2 transition-all duration-300 ${
                         isUploading
                           ? "bg-gray-300 text-white cursor-not-allowed"
                           : "bg-gradient-to-r from-indigo-500 to-blue-500 text-white hover:shadow-lg hover:scale-105"
@@ -393,7 +393,7 @@ export default function Upload() {
                     <button
                       onClick={removeFile}
                       disabled={isUploading}
-                      className={`px-5 py-2 rounded-full text-sm font-semibold shadow-md flex items-center gap-2 transition-all duration-300 ${
+                      className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold shadow-md flex items-center gap-1 sm:gap-2 transition-all duration-300 ${
                         isUploading
                           ? "bg-gray-200 text-white cursor-not-allowed"
                           : "bg-gradient-to-r from-red-500 to-pink-500 text-white hover:shadow-lg hover:scale-105"
@@ -406,7 +406,7 @@ export default function Upload() {
                   {success && !isUploading && (
                     <button
                       onClick={goToStudyPlan}
-                      className="mt-4 w-full bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition-all duration-300"
+                      className="mt-3 sm:mt-4 w-full bg-green-500 text-white py-2 rounded-lg text-sm sm:text-base font-semibold hover:bg-green-600 transition-all duration-300"
                     >
                       View Study Plan
                     </button>
@@ -419,99 +419,99 @@ export default function Upload() {
         
         {/* Preview Section - Updated with Four Boxes */}
         {showPreview && parsedSyllabus && (
-          <div className="mt-12 p-8 bg-white bg-opacity-95 backdrop-blur-md rounded-2xl shadow-xl">
-            <div className="flex items-center mb-6">
-              <span className="text-2xl mr-3">📚</span>
+          <div className="mt-6 sm:mt-8 md:mt-12 p-4 sm:p-6 md:p-8 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30">
+            <div className="flex items-center mb-4 sm:mb-6">
+              <span className="text-xl sm:text-2xl mr-2 sm:mr-3">📚</span>
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">Syllabus Preview</h2>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white">Syllabus Preview</h2>
                 {parsedSyllabus.class && (
-                  <p className="text-gray-600 font-medium">Class: {parsedSyllabus.class}</p>
+                  <p className="text-sm sm:text-base text-white/80 font-medium">Class: {parsedSyllabus.class}</p>
                 )}
               </div>
             </div>
             
             {/* Four subject boxes in a 2x2 grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
               {/* Physics Box */}
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border-2 border-blue-200 shadow-sm">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white font-bold text-lg">P</span>
+              <div className="bg-blue-500/20 backdrop-blur p-4 sm:p-5 md:p-6 rounded-xl border border-blue-400/30 shadow-sm hover:bg-blue-500/30 transition-all duration-300">
+                <div className="flex items-center mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500/40 backdrop-blur rounded-lg flex items-center justify-center mr-2 sm:mr-3 border border-blue-400/30">
+                    <span className="text-white font-bold text-base sm:text-lg">P</span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800">Physics</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-white">Physics</h3>
                 </div>
-                <ul className="space-y-2 text-gray-700">
+                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm md:text-base text-white/90">
                   {parsedSyllabus.subjects.Physics && parsedSyllabus.subjects.Physics.slice(0, 4).map((topic, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-blue-500 mr-2">•</span>
+                      <span className="text-blue-300 mr-2">•</span>
                       <span>{topic}</span>
                     </li>
                   ))}
                   {(!parsedSyllabus.subjects.Physics || parsedSyllabus.subjects.Physics.length === 0) && (
-                    <li className="text-gray-500 italic">No physics topics found</li>
+                    <li className="text-white/60 italic">No physics topics found</li>
                   )}
                 </ul>
               </div>
 
               {/* Math Box */}
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border-2 border-green-200 shadow-sm">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white font-bold text-lg">M</span>
+              <div className="bg-green-500/20 backdrop-blur p-4 sm:p-5 md:p-6 rounded-xl border border-green-400/30 shadow-sm hover:bg-green-500/30 transition-all duration-300">
+                <div className="flex items-center mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500/40 backdrop-blur rounded-lg flex items-center justify-center mr-2 sm:mr-3 border border-green-400/30">
+                    <span className="text-white font-bold text-base sm:text-lg">M</span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800">Math</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-white">Math</h3>
                 </div>
-                <ul className="space-y-2 text-gray-700">
+                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm md:text-base text-white/90">
                   {parsedSyllabus.subjects.Math && parsedSyllabus.subjects.Math.slice(0, 4).map((topic, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-green-500 mr-2">•</span>
+                      <span className="text-green-300 mr-2">•</span>
                       <span>{topic}</span>
                     </li>
                   ))}
                   {(!parsedSyllabus.subjects.Math || parsedSyllabus.subjects.Math.length === 0) && (
-                    <li className="text-gray-500 italic">No math topics found</li>
+                    <li className="text-white/60 italic">No math topics found</li>
                   )}
                 </ul>
               </div>
 
               {/* Chemistry Box */}
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border-2 border-purple-200 shadow-sm">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white font-bold text-lg">C</span>
+              <div className="bg-purple-500/20 backdrop-blur p-4 sm:p-5 md:p-6 rounded-xl border border-purple-400/30 shadow-sm hover:bg-purple-500/30 transition-all duration-300">
+                <div className="flex items-center mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-500/40 backdrop-blur rounded-lg flex items-center justify-center mr-2 sm:mr-3 border border-purple-400/30">
+                    <span className="text-white font-bold text-base sm:text-lg">C</span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800">Chemistry</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-white">Chemistry</h3>
                 </div>
-                <ul className="space-y-2 text-gray-700">
+                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm md:text-base text-white/90">
                   {parsedSyllabus.subjects.Chemistry && parsedSyllabus.subjects.Chemistry.slice(0, 4).map((topic, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-purple-500 mr-2">•</span>
+                      <span className="text-purple-300 mr-2">•</span>
                       <span>{topic}</span>
                     </li>
                   ))}
                   {(!parsedSyllabus.subjects.Chemistry || parsedSyllabus.subjects.Chemistry.length === 0) && (
-                    <li className="text-gray-500 italic">No chemistry topics found</li>
+                    <li className="text-white/60 italic">No chemistry topics found</li>
                   )}
                 </ul>
               </div>
 
               {/* Biology Box */}
-              <div className="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border-2 border-red-200 shadow-sm">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white font-bold text-lg">B</span>
+              <div className="bg-red-500/20 backdrop-blur p-4 sm:p-5 md:p-6 rounded-xl border border-red-400/30 shadow-sm hover:bg-red-500/30 transition-all duration-300">
+                <div className="flex items-center mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-500/40 backdrop-blur rounded-lg flex items-center justify-center mr-2 sm:mr-3 border border-red-400/30">
+                    <span className="text-white font-bold text-base sm:text-lg">B</span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800">Biology</h3>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-white">Biology</h3>
                 </div>
-                <ul className="space-y-2 text-gray-700">
+                <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm md:text-base text-white/90">
                   {parsedSyllabus.subjects.Biology && parsedSyllabus.subjects.Biology.slice(0, 4).map((topic, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-red-500 mr-2">•</span>
+                      <span className="text-red-300 mr-2">•</span>
                       <span>{topic}</span>
                     </li>
                   ))}
                   {(!parsedSyllabus.subjects.Biology || parsedSyllabus.subjects.Biology.length === 0) && (
-                    <li className="text-gray-500 italic">No biology topics found</li>
+                    <li className="text-white/60 italic">No biology topics found</li>
                   )}
                 </ul>
               </div>

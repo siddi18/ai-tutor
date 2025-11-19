@@ -104,19 +104,19 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 w-full max-w-2xl mx-auto mt-12 p-6 sm:p-8 md:p-12 rounded-3xl
+      className="space-y-4 sm:space-y-6 w-full max-w-2xl mx-auto mt-4 sm:mt-8 md:mt-12 p-4 sm:p-6 md:p-8 lg:p-12 rounded-2xl sm:rounded-3xl
                  bg-white/25 backdrop-blur-2xl border border-white/40 shadow-2xl
                  text-gray-800"
     >
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">
+      <div className="flex justify-between items-center mb-3 sm:mb-4">
+        <h2 className="text-lg sm:text-xl font-bold">
           {initialData ? "Edit Profile" : "Create Profile"}
         </h2>
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="text-gray-500 hover:text-gray-700 text-sm"
+            className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm"
             disabled={loading}
           >
             Cancel
@@ -164,29 +164,29 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
       </div>
 
       {/* Name Fields */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">👤 First Name *</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">👤 First Name *</label>
           <input
             type="text"
             name="firstName"
             value={formData.firstName}
             onChange={handleInputChange}
             placeholder="Enter your first name"
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
             required
             disabled={loading}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Last Name *</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Last Name *</label>
           <input
             type="text"
             name="lastName"
             value={formData.lastName}
             onChange={handleInputChange}
             placeholder="Enter your last name"
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
             required
             disabled={loading}
           />
@@ -194,28 +194,28 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
       </div>
 
       {/* Contact Fields */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">📱 Mobile Number</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">📱 Mobile Number</label>
           <input
             type="tel"
             name="mobileNumber"
             value={formData.mobileNumber}
             onChange={handleInputChange}
             placeholder="Enter your mobile number"
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
             disabled={loading}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">📧 Email Address *</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">📧 Email Address *</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
             placeholder="Enter your email address"
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
             required
             disabled={loading}
           />
@@ -224,27 +224,27 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
 
       {/* About Me */}
       <div>
-        <label className="block text-sm font-medium mb-1">About Me</label>
+        <label className="block text-xs sm:text-sm font-medium mb-1">About Me</label>
         <textarea
           name="aboutMe"
           value={formData.aboutMe}
           onChange={handleInputChange}
           placeholder="Tell us about yourself..."
           rows={3}
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500 resize-none"
+          className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500 resize-none"
           disabled={loading}
         />
       </div>
 
       {/* Academic Info */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">🎓 Grade</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">🎓 Grade</label>
           <select
             name="grade"
             value={formData.grade}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
             disabled={loading}
           >
             <option value="">Select your grade</option>
@@ -254,12 +254,12 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Stream</label>
+          <label className="block text-xs sm:text-sm font-medium mb-1">Stream</label>
           <select
             name="stream"
             value={formData.stream}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
             disabled={loading}
           >
             <option value="">Select your stream</option>
@@ -272,12 +272,12 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
 
       {/* Target Exam */}
       <div>
-        <label className="block text-sm font-medium mb-1">🎯 Target Entrance Exam</label>
+        <label className="block text-xs sm:text-sm font-medium mb-1">🎯 Target Entrance Exam</label>
         <select
           name="targetExam"
           value={formData.targetExam}
           onChange={handleInputChange}
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+          className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
           disabled={loading}
         >
           <option value="">Select your target exam</option>
@@ -289,12 +289,12 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
 
       {/* Subjects */}
       <div>
-        <label className="block text-sm font-medium mb-2">📚 Subjects</label>
+        <label className="block text-xs sm:text-sm font-medium mb-2">📚 Subjects</label>
         <div className="flex flex-wrap gap-2">
           {subjects.map((subject) => (
             <label
               key={subject}
-              className="flex items-center space-x-1 cursor-pointer text-sm"
+              className="flex items-center space-x-1 cursor-pointer text-xs sm:text-sm"
             >
               <input
                 type="checkbox"
@@ -312,8 +312,8 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
 
       {/* Study Hours */}
       <div>
-        <label className="block text-sm font-medium mb-2">⏰ Daily Study Hours</label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <label className="block text-xs sm:text-sm font-medium mb-2">⏰ Daily Study Hours</label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label className="block text-xs text-gray-500 mb-1">Start Time</label>
             <input
@@ -321,7 +321,7 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
               name="dailyStudyHours.startTime"
               value={formData.dailyStudyHours.startTime}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
               disabled={loading}
             />
           </div>
@@ -332,7 +332,7 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
               name="dailyStudyHours.endTime"
               value={formData.dailyStudyHours.endTime}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500"
               disabled={loading}
             />
           </div>
@@ -343,17 +343,17 @@ const ProfileForm = ({ onSubmit, onCancel, initialData, loading }) => {
       <button
         type="submit"
         disabled={loading}
-        className={`w-full ${loading ? 'bg-gray-400' : 'bg-emerald-500 hover:bg-emerald-600'} text-white font-medium py-3 px-6 rounded-md transition-colors duration-200 flex items-center justify-center space-x-2`}
+        className={`w-full ${loading ? 'bg-gray-400' : 'bg-emerald-500 hover:bg-emerald-600'} text-white font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base`}
       >
         {loading ? (
           <>
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            <span>{initialData ? "Updating..." : "Creating..."}</span>
+            <span className="text-xs sm:text-sm">{initialData ? "Updating..." : "Creating..."}</span>
           </>
         ) : (
           <>
             <span>🚀</span>
-            <span>{initialData ? "Update Profile" : "Create My Profile"}</span>
+            <span className="text-sm sm:text-base">{initialData ? "Update Profile" : "Create My Profile"}</span>
           </>
         )}
       </button>

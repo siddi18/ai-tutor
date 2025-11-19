@@ -215,12 +215,12 @@ const Profile = () => {
 
   return (
     <div
-      className="h-screen w-full flex items-start justify-end bg-cover bg-center overflow-y-auto"
+      className="min-h-screen w-full flex items-start justify-center md:justify-end bg-cover bg-center overflow-y-auto py-4 md:py-0"
       style={{ backgroundImage: `url(${profileBg})` }}
     >
       {/* Right Side - Glassmorphism Form / Profile Display */}
-      <div className="w-full md:w-1/2 lg:w-2/5 flex justify-center py-0 mr-1">
-        <div className="w-11/12 md:w-5/6 lg:w-3/2 rounded-3xl bg-white/70 border border-white/40 shadow-2xl p-1 px-1 mr-2 min-h-[80vh]">
+      <div className="w-full md:w-1/2 lg:w-2/5 flex justify-center py-2 md:py-0 px-2 md:px-0 md:mr-1">
+        <div className="w-full md:w-5/6 lg:w-3/2 rounded-2xl md:rounded-3xl bg-white/90 md:bg-white/70 border border-white/40 shadow-2xl p-2 md:p-1 min-h-[80vh]">
           {error && (
             <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
               {error}

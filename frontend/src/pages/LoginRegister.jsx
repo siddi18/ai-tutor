@@ -192,28 +192,41 @@ const LoginRegister = () => {
 
   return (
     <div className="min-h-screen bg-green-50 flex items-center justify-center p-4 overflow-hidden fixed inset-0">
-      <div className="flex flex-col lg:flex-row w-full max-w-6xl h-[90vh]">
-        {/* Left side - Image carousel */}
-        <div className="lg:w-1/2 h-80 lg:h-full">
+      <div className="flex flex-col lg:flex-row w-full max-w-6xl h-[90vh] shadow-xl rounded-2xl bg-white overflow-hidden">
+        {/* Left side - Image carousel (Hidden on mobile) */}
+        <div className="hidden lg:block lg:w-1/2 h-full">
           <ImageCarousel />
         </div>
 
         {/* Right side - Auth form */}
-        <div className="lg:w-1/2 flex flex-col justify-center p-6 lg:p-12 h-full">
-          <div className="max-w-md mx-auto w-full h-full flex flex-col justify-center">
-            <Typography variant="h4" className="font-bold text-slate-800 mb-2 text-center">
+        <div className="w-full lg:w-1/2 flex flex-col justify-center p-6 sm:p-8 lg:p-12 h-full overflow-y-auto">
+          <div className="max-w-md mx-auto w-full flex flex-col justify-center">
+            {/* Mobile Logo - Visible only on small screens */}
+            <div className="lg:hidden mb-6 text-center">
+              <div className="inline-block bg-green-600 text-white rounded-lg px-5 py-2 shadow-md mb-4">
+                <h2 className="font-bold text-xl">AI Tutor</h2>
+              </div>
+            </div>
+            
+            <Typography variant="h4" className="font-bold text-slate-800 mb-2 text-center text-2xl sm:text-3xl lg:text-4xl">
               Welcome to AI Tutor
             </Typography>
-            <Typography variant="body1" className="text-slate-600 mb-6 text-center">
+            <Typography variant="body1" className="text-slate-600 mb-4 sm:mb-6 text-center text-sm sm:text-base">
               {activeTab === 0 ? "Sign in to your account" : "Create your account"}
             </Typography>
 
             <Tabs
               value={activeTab}
               onChange={(_, newValue) => setActiveTab(newValue)}
-              className="mb-6"
+              className="mb-4 sm:mb-6"
+              centered
               sx={{
-                "& .MuiTab-root": { textTransform: "none", fontSize: "1rem", fontWeight: 600 },
+                "& .MuiTab-root": { 
+                  textTransform: "none", 
+                  fontSize: { xs: "0.875rem", sm: "1rem" }, 
+                  fontWeight: 600,
+                  minWidth: { xs: "120px", sm: "160px" }
+                },
                 "& .MuiTabs-indicator": { backgroundColor: "#2FA86A" },
               }}
             >
@@ -224,10 +237,10 @@ const LoginRegister = () => {
             {/* Form */}
             <form
               onSubmit={handleSubmit}
-              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
             >
               {activeTab === 1 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <TextField
                     label="First Name"
                     value={formData.firstName}
@@ -236,6 +249,11 @@ const LoginRegister = () => {
                     helperText={errors.firstName}
                     fullWidth
                     variant="outlined"
+                    size="small"
+                    sx={{ 
+                      '& .MuiInputBase-root': { fontSize: { xs: '0.9rem', sm: '1rem' } },
+                      '& .MuiInputLabel-root': { fontSize: { xs: '0.9rem', sm: '1rem' } }
+                    }}
                   />
                   <TextField
                     label="Last Name"
@@ -245,6 +263,11 @@ const LoginRegister = () => {
                     helperText={errors.lastName}
                     fullWidth
                     variant="outlined"
+                    size="small"
+                    sx={{ 
+                      '& .MuiInputBase-root': { fontSize: { xs: '0.9rem', sm: '1rem' } },
+                      '& .MuiInputLabel-root': { fontSize: { xs: '0.9rem', sm: '1rem' } }
+                    }}
                   />
                 </div>
               )}
@@ -258,6 +281,11 @@ const LoginRegister = () => {
                 helperText={errors.email}
                 fullWidth
                 variant="outlined"
+                size="small"
+                sx={{ 
+                  '& .MuiInputBase-root': { fontSize: { xs: '0.9rem', sm: '1rem' } },
+                  '& .MuiInputLabel-root': { fontSize: { xs: '0.9rem', sm: '1rem' } }
+                }}
               />
 
               <TextField
@@ -269,6 +297,11 @@ const LoginRegister = () => {
                 helperText={errors.password}
                 fullWidth
                 variant="outlined"
+                size="small"
+                sx={{ 
+                  '& .MuiInputBase-root': { fontSize: { xs: '0.9rem', sm: '1rem' } },
+                  '& .MuiInputLabel-root': { fontSize: { xs: '0.9rem', sm: '1rem' } }
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -290,14 +323,20 @@ const LoginRegister = () => {
                   helperText={errors.confirmPassword}
                   fullWidth
                   variant="outlined"
+                  size="small"
+                  sx={{ 
+                    '& .MuiInputBase-root': { fontSize: { xs: '0.9rem', sm: '1rem' } },
+                    '& .MuiInputLabel-root': { fontSize: { xs: '0.9rem', sm: '1rem' } }
+                  }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           edge="end"
+                          size="small"
                         >
-                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                          {showConfirmPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                         </IconButton>
                       </InputAdornment>
                     ),
@@ -306,7 +345,7 @@ const LoginRegister = () => {
               )}
 
               {activeTab === 0 && (
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -315,7 +354,7 @@ const LoginRegister = () => {
                         sx={{ color: "#2FA86A" }}
                       />
                     }
-                    label="Remember me"
+                    label={<span className="text-sm sm:text-base">Remember me</span>}
                   />
                   <Button
                     variant="text"
@@ -323,6 +362,9 @@ const LoginRegister = () => {
                     sx={{
                       color: "#2FA86A",
                       textTransform: "none",
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                      padding: { xs: "4px 8px", sm: "6px 16px" },
+                      justifyContent: { xs: "flex-start", sm: "center" },
                       "&:hover": { backgroundColor: "rgba(47, 168, 106, 0.04)" },
                     }}
                   >
@@ -339,10 +381,11 @@ const LoginRegister = () => {
                 sx={{
                   backgroundColor: "#2FA86A",
                   "&:hover": { backgroundColor: "#268A5A" },
-                  py: 1.5,
-                  fontSize: "1rem",
+                  py: { xs: 1.2, sm: 1.5 },
+                  fontSize: { xs: "0.9rem", sm: "1rem" },
                   textTransform: "none",
                   borderRadius: 2,
+                  mt: 1
                 }}
               >
                 {loading ? (
@@ -354,9 +397,9 @@ const LoginRegister = () => {
                 )}
               </Button>
 
-              <div className="flex items-center my-4">
+              <div className="flex items-center my-3 sm:my-4">
                 <div className="flex-1 border-t border-gray-300"></div>
-                <span className="px-4 text-gray-500 text-sm">or</span>
+                <span className="px-3 sm:px-4 text-gray-500 text-xs sm:text-sm">or</span>
                 <div className="flex-1 border-t border-gray-300"></div>
               </div>
 
@@ -365,12 +408,12 @@ const LoginRegister = () => {
                 variant="outlined"
                 onClick={handleGoogleSignIn}
                 disabled={loading}
-                startIcon={<FcGoogle />}
+                startIcon={<FcGoogle size={20} />}
                 sx={{
                   borderColor: "#E5E7EB",
                   color: "#374151",
-                  py: 1.5,
-                  fontSize: "1rem",
+                  py: { xs: 1.2, sm: 1.5 },
+                  fontSize: { xs: "0.9rem", sm: "1rem" },
                   textTransform: "none",
                   borderRadius: 2,
                   "&:hover": {

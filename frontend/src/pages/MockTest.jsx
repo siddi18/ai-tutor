@@ -372,8 +372,17 @@ function MockTest() {
     )).join(', ');
 
     return (
-      <div className="flex items-center justify-center min-h-screen relative px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200"></div>
+      <div 
+        className="flex items-center justify-center min-h-screen relative px-4 sm:px-6 overflow-hidden"
+        style={{
+          backgroundImage: "url('/images/backgroundimage1.png')",
+          backgroundSize: "cover",
+          backgroundAttachment: "fixed",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat"
+        }}
+      >
+        <div className="absolute inset-0 bg-black/20"></div>
         <div className="bg-white text-gray-900 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-2xl p-6 sm:p-8 md:p-10 max-w-6xl w-full relative z-10 border border-gray-100 mx-2 sm:mx-4">
           <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">Mock Test - {examData.examType}</h1>
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
@@ -426,7 +435,16 @@ function MockTest() {
   const stats = calculateStats();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-2 sm:p-4 relative">
+    <div 
+      className="min-h-screen flex items-center justify-center p-2 sm:p-4 relative"
+      style={{
+        backgroundImage: "url('/images/backgroundimage1.png')",
+        backgroundSize: "cover",
+        backgroundAttachment: "fixed",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat"
+      }}
+    >
       <div className="bg-white rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-lg sm:shadow-xl p-4 sm:p-6 w-full max-w-6xl mx-2 sm:mx-4">
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
