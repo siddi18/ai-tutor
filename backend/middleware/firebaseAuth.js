@@ -22,7 +22,26 @@ async function firebaseAuth(req, res, next) {
   const idToken = authHeader.split("Bearer ")[1];
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    req.firebaseUser = decodedToken;
+    
+    // Fetch full user record from Firebase to get displayName and photoURL
+    try {
+      const userRecord = await admin.auth().getUser(decodedToken.uid);
+      req.firebaseUser = {
+        uid: decodedToken.uid,
+        email: decodedToken.email || userRecord.email,
+        name: userRecord.displayName || decodedToken.name || "",
+        picture: userRecord.photoURL || decodedToken.picture || "",
+      };
+    } catch (fetchError) {
+      console.warn("Could not fetch full user record, using token data only:", fetchError);
+      req.firebaseUser = {
+        uid: decodedToken.uid,
+        email: decodedToken.email,
+        name: decodedToken.name || "",
+        picture: decodedToken.picture || "",
+      };
+    }
+    
     next();
   } catch (error) {
     console.error("Firebase Auth Error:", error);

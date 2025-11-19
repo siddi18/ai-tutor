@@ -13,6 +13,10 @@ router.post("/sync", firebaseAuth, async (req, res) => {
     const { uid, email, name, picture } = req.firebaseUser;
     const { firstName, lastName, grade, stream, targetExam, subjects, dailyStudyHours } = req.body;
 
+    console.log("Syncing user with Firebase UID:", uid);
+    console.log("Request body:", req.body);
+    console.log("Firebase user data:", req.firebaseUser);
+
     let user = await User.findOne({ firebaseUid: uid });
 
     if (!user) {
@@ -20,6 +24,8 @@ router.post("/sync", firebaseAuth, async (req, res) => {
       const splitName = name ? name.split(" ") : [];
       const fName = firstName || splitName[0] || "";
       const lName = lastName || splitName.slice(1).join(" ") || "";
+
+      console.log("Creating new user with:", { uid, email, fName, lName });
 
       user = new User({
         firebaseUid: uid,
@@ -35,11 +41,14 @@ router.post("/sync", firebaseAuth, async (req, res) => {
       });
 
       await user.save();
+      console.log("✅ New user created successfully:", user._id);
+    } else {
+      console.log("✅ User already exists:", user._id);
     }
 
     res.json(user);
   } catch (error) {
-    console.error("Error syncing user:", error);
+    console.error("❌ Error syncing user:", error);
     res.status(500).json({ error: error.message });
   }
 });

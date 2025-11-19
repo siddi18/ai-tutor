@@ -49,30 +49,42 @@ const Profile = () => {
   const fetchProfileData = async () => {
     try {
       setLoading(true);
+      setError(null);
+      
       const stored = getStoredMongoUser();
+      console.log("📋 Fetching profile data. Stored user:", stored);
 
       // Prefer stored Mongo user id if available
       if (stored?._id) {
+        console.log("🔍 Fetching user by MongoDB ID:", stored._id);
         const response = await fetch(`http://localhost:5000/api/users/${stored._id}`);
         if (!response.ok) {
+          console.error("❌ Failed to fetch by ID, status:", response.status);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.log("✅ Profile data fetched by ID:", data);
         setProfileData(data);
         setError(null);
         return;
       }
 
       // Fallback: use Firebase ID token to query /me
+      console.log("🔑 No stored ID, trying Firebase auth token...");
       const token = await auth.currentUser?.getIdToken();
       if (token) {
+        console.log("🔍 Using Firebase token to fetch user");
         const response = await fetch("http://localhost:5000/api/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!response.ok) {
+          console.error("❌ Failed to fetch by token, status:", response.status);
+          const errorText = await response.text();
+          console.error("❌ Error response:", errorText);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.log("✅ Profile data fetched by token:", data);
         // Cache for later
         localStorage.setItem("mongoUser", JSON.stringify(data));
         setProfileData(data);
@@ -81,11 +93,12 @@ const Profile = () => {
       }
 
       // If we reach here, we have no way to identify the user
+      console.error("❌ No stored user and no Firebase token available");
       setError("You are not logged in. Please sign in again.");
       setProfileData(null);
       
     } catch (err) {
-      console.error("Error fetching profile data:", err);
+      console.error("❌ Error fetching profile data:", err);
       setError("Failed to load profile data");
     } finally {
       setLoading(false);

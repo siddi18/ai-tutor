@@ -48,8 +48,8 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api"
  */
 const syncUserWithMongoDB = async (user, extraData = {}) => {
   try {
+    console.log("🔄 Starting MongoDB sync for user:", user.uid);
     const idToken = await user.getIdToken();
-    //console.log('idToken:', idToken);
     const response = await fetch(`${API_BASE_URL}/users/sync`, {
       method: "POST",
       headers: {
@@ -60,11 +60,15 @@ const syncUserWithMongoDB = async (user, extraData = {}) => {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to sync user with MongoDB");
+      const errorText = await response.text();
+      console.error("❌ MongoDB sync failed:", response.status, errorText);
+      throw new Error(`Failed to sync user with MongoDB: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log("✅ Synced user with MongoDB:", data);
+    console.log("✅ MongoDB sync successful:", data);
+    // Store in localStorage immediately
+    localStorage.setItem("mongoUser", JSON.stringify(data));
     return data; // MongoDB user object
   } catch (error) {
     console.error("❌ MongoDB sync error:", error);
@@ -123,6 +127,7 @@ export const loginWithEmail = async (email, password) => {
  */
 export const loginWithGoogle = async () => {
   try {
+    console.log("🔐 Starting Google sign-in...");
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
 
@@ -132,11 +137,13 @@ export const loginWithGoogle = async () => {
     const lastName = nameParts.slice(1).join(" ") || "";
 
     // 🔄 Sync with MongoDB
-    await syncUserWithMongoDB(user, { firstName, lastName });
+    const mongoUser = await syncUserWithMongoDB(user, { firstName, lastName });
+    console.log("✅ Google sign-in complete. MongoDB user:", mongoUser);
 
-    return result;
+    // Return both Firebase and MongoDB data
+    return { ...result, mongoUser };
   } catch (error) {
-    console.error("Google Sign-in Error:", error);
+    console.error("❌ Google Sign-in Error:", error);
     throw error;
   }
 };

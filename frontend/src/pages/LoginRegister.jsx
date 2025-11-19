@@ -95,17 +95,10 @@ const LoginRegister = () => {
         // LOGIN
         console.log("Attempting login with:", formData.email);
         const userCredential = await loginWithEmail(formData.email, formData.password);
-        console.log("Login successful:", userCredential.user);
-        
-        // 🔑 Sync with MongoDB after login
-        const mongoUser = await syncUserWithMongoDB(userCredential.user);
-        if (mongoUser) {
-          localStorage.setItem("mongoUser", JSON.stringify(mongoUser)); // 🔑 Save user
-          console.log("MongoDB sync successful after login:", mongoUser);
-        }
+        console.log("✅ Login successful:", userCredential.user);
         
         showSnackbar("🎉 Login successful! Redirecting...", "success");
-        navigate("/profile");
+        setTimeout(() => navigate("/profile"), 500);
       } else {
         // SIGNUP
         console.log("Attempting registration with:", formData.email);
@@ -115,25 +108,15 @@ const LoginRegister = () => {
           formData.email,
           formData.password
         );
-        console.log("Registration successful:", userCredential.user);
+        console.log("✅ Registration successful:", userCredential.user);
         
-        // 🔑 Sync with MongoDB (registerWithEmail already calls sync, but we want the returned object)
-        const mongoUser = await syncUserWithMongoDB(userCredential.user, {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-        });
-        if (mongoUser) {
-          localStorage.setItem("mongoUser", JSON.stringify(mongoUser));
-          console.log("MongoDB sync successful after signup:", mongoUser);
-        }
-
         const displayName =
           userCredential.user.displayName ||
           `${formData.firstName} ${formData.lastName}` ||
           userCredential.user.email;
 
         showSnackbar(`🎉 Account created successfully! Welcome, ${displayName}`, "success");
-
+        
         setTimeout(() => {
           navigate("/profile");
         }, 1500);
@@ -164,20 +147,23 @@ const LoginRegister = () => {
     
     try {
       console.log("Attempting Google sign-in");
-      const userCredential = await loginWithGoogle();
-      console.log("Google sign-in successful:", userCredential.user);
+      const result = await loginWithGoogle();
+      console.log("Google sign-in successful:", result.user);
       
-      const mongoUser = await syncUserWithMongoDB(userCredential.user);
+      const mongoUser = result.mongoUser;
+      const displayName = result.user.displayName || result.user.email || "User";
+      
       if (mongoUser) {
-        localStorage.setItem("mongoUser", JSON.stringify(mongoUser));
-        console.log("MongoDB sync successful after Google sign-in:", mongoUser);
+        console.log("✅ MongoDB user ready:", mongoUser);
+        showSnackbar(`🎉 Google sign-in successful! Welcome, ${displayName}`, "success");
+        setTimeout(() => navigate("/profile"), 500);
+      } else {
+        console.error("⚠️ MongoDB sync returned null");
+        showSnackbar(`⚠️ Google sign-in successful, but profile sync failed. Please try refreshing.`, "warning");
+        setTimeout(() => navigate("/profile"), 1000);
       }
-      
-      const displayName = userCredential.user.displayName || userCredential.user.email || "User";
-      showSnackbar(`🎉 Google sign-in successful! Welcome, ${displayName}`, "success");
-      navigate("/profile");
     } catch (error) {
-      console.error("Google sign-in error:", error);
+      console.error("❌ Google sign-in error:", error);
       if (error.code !== "auth/popup-closed-by-user") {
         const errorMessage = getErrorMessage(error.code);
         showSnackbar(errorMessage, "error");
