@@ -151,14 +151,14 @@ export default function Upload() {
     const formData = new FormData();
     formData.append("file", file.fileObject);
 
-    // Auto-detect API URL
-    const getApiUrl = () => {
-      if (window.location.hostname.includes('onrender.com')) {
-        return '/api';
-      }
-      return 'http://localhost:5000/api';
-    };
-    const API_URL = getApiUrl();
+    // // Auto-detect API URL
+    // const getApiUrl = () => {
+    //   if (window.location.hostname.includes('onrender.com')) {
+    //     return '/api';
+    //   }
+    //   return 'http://localhost:5000/api';
+    // };
+      const API_URL ="https://ai-tutor-1k05.onrender.com/api"
 
     try {
       console.log("Uploading to:", `${API_URL}/upload-syllabus/${userId}`);
