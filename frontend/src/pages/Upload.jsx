@@ -152,13 +152,8 @@ export default function Upload() {
     formData.append("file", file.fileObject);
 
     // Auto-detect API URL
-    const getApiUrl = () => {
-      if (window.location.hostname.includes('onrender.com')) {
-        return '/api';
-      }
-      return 'http://localhost:5000/api';
-    };
-    const API_URL = getApiUrl();
+ 
+    const API_URL ="https://ai-tutor-1k05.onrender.com/api"
 
     try {
       console.log("Uploading to:", `${API_URL}/upload-syllabus/${userId}`);
@@ -230,21 +225,23 @@ export default function Upload() {
         message: err.message,
         stack: err.stack,
         userId: userId,
-        apiUrl: getApiUrl()
+        apiUrl: API_URL
       });
       
       // Better error messages for common issues
       let errorMessage = err.message;
-      if (err.message.includes('unavailable') || err.message.includes('502')) {
-        errorMessage = "⏳ Parser service is starting up (cold start). Please wait 30 seconds and try again.";
+      if (err.message.includes('status: 500')) {
+        errorMessage = "⚠️ Server error. The parser service may be down or on cold start. Please wait 60 seconds and try again, or try a smaller file.";
+      } else if (err.message.includes('unavailable') || err.message.includes('502')) {
+        errorMessage = "⏳ Parser service is starting up (cold start). Please wait 30-60 seconds and try again.";
       } else if (err.message.includes('timeout')) {
-        errorMessage = "⏱️ PDF too large. Try a smaller file (max 50 pages recommended).";
+        errorMessage = "⏱️ PDF too large or processing timeout. Try a smaller file (max 50 pages recommended).";
       } else if (err.message.includes('Failed to fetch')) {
-        errorMessage = "🔌 Cannot reach server. Check if backend is running on port 5000.";
+        errorMessage = "🔌 Cannot reach server. Check if backend is running.";
       } else if (err.message.includes('NetworkError') || err.message.includes('network')) {
         errorMessage = "🌐 Network error. Please check your internet connection.";
       } else if (err.message.includes('HTTP error')) {
-        errorMessage = `Server error: ${err.message}. Please check if the backend server is running on port 5000.`;
+        errorMessage = `Server error (${err.message}). The parser service might be unavailable on Render. Wait 60 seconds and retry.`;
       }
       
       setError(`❌ ${errorMessage}`);
