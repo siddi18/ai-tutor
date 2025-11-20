@@ -59,6 +59,13 @@ class ApiService {
       });
 
       if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        // If study plan not found (404), throw specific error instead of falling back
+        if (response.status === 404) {
+          throw new Error(errorData.message || 'No study plan found. Please create one by uploading a syllabus.');
+        }
+        
         throw new Error(`Failed to fetch study plan: ${response.statusText}`);
       }
 
@@ -67,7 +74,13 @@ class ApiService {
       return data;
     } catch (error) {
       console.error('Error fetching study plan:', error);
-      return this.getMockStudyPlan(); // fallback mock data
+      // Only use mock data in development or if explicitly needed
+      if (import.meta.env.DEV) {
+        console.warn('Using mock study plan data as fallback');
+        return this.getMockStudyPlan();
+      }
+      // Re-throw the error so the UI can handle it properly
+      throw error;
     }
   }
 

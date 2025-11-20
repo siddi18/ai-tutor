@@ -103,7 +103,13 @@ const StudyPlan = () => {
         setDailySchedule(days);
       } catch (e) {
         console.error("Failed to load topics:", e);
-        setError("Failed to load study plan. Please try again.");
+        
+        // Check if it's a "no study plan" error
+        if (e.message && e.message.includes('No study plan found')) {
+          setError("No study plan found. Please upload a syllabus to create one.");
+        } else {
+          setError("Failed to load study plan. Please try again.");
+        }
       } finally {
         setLoading(false);
       }
@@ -182,14 +188,23 @@ const StudyPlan = () => {
         {!loading && error && (
           <div className="space-y-3 mb-4">
             <div className="text-red-200 bg-red-600/20 border border-red-400/40 rounded-md px-4 py-3">{error}</div>
-            <div className="text-center">
-              <button
-                onClick={handleFixStudyPlan}
-                disabled={fixing}
-                className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md disabled:opacity-50"
-              >
-                {fixing ? "Fixing..." : "🔧 Fix Study Plan (Regenerate Topic IDs)"}
-              </button>
+            <div className="text-center space-x-3">
+              {error.includes('No study plan found') ? (
+                <button
+                  onClick={() => navigate('/upload')}
+                  className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-md"
+                >
+                  Upload Syllabus
+                </button>
+              ) : (
+                <button
+                  onClick={handleFixStudyPlan}
+                  disabled={fixing}
+                  className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md disabled:opacity-50"
+                >
+                  {fixing ? "Fixing..." : "🔧 Fix Study Plan (Regenerate Topic IDs)"}
+                </button>
+              )}
             </div>
           </div>
         )}
