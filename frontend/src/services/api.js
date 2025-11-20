@@ -45,12 +45,12 @@ class ApiService {
       } else if (syllabusId) {
         url = `${API_BASE_URL}/api/study-plan/${userId}/${syllabusId}?t=${timestamp}`;
       } else {
-        url = `${API_BASE_URL}/api/study-plan/${userId}?t=${timestamp}`;
+        url = `${API_BASE_URL}/api/study-plan/latest/${userId}?t=${timestamp}`;
       }
 
       const response = await fetch(url, {
         method: 'GET',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
@@ -76,7 +76,7 @@ class ApiService {
       console.log('Fetching all topics for user:', userId);
       const response = await fetch(`${API_BASE_URL}/api/study-plan/topics/${userId}`, {
         method: 'GET',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
         },
       });
@@ -97,11 +97,11 @@ class ApiService {
   async markProgress(userId, topicId) {
     try {
       console.log('Marking topic as completed:', { userId, topicId });
-      
+
       if (!userId || !topicId) {
         throw new Error('userId and topicId are required');
       }
-      
+
       const response = await fetch(`${API_BASE_URL}/api/study-plan/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -124,11 +124,11 @@ class ApiService {
   async markPending(userId, topicId) {
     try {
       console.log('Marking topic as pending:', { userId, topicId });
-      
+
       if (!userId || !topicId) {
         throw new Error('userId and topicId are required');
       }
-      
+
       const response = await fetch(`${API_BASE_URL}/api/study-plan/pending`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -152,7 +152,7 @@ class ApiService {
   async fixStudyPlan(userId) {
     try {
       console.log('Fixing study plan for user:', userId);
-      
+
       const response = await fetch(`${API_BASE_URL}/api/study-plan/fix/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -175,14 +175,14 @@ class ApiService {
   async getQuizQuestions(userId, subject, topicId, topicName) {
     try {
       console.log('Fetching quiz for:', { userId, subject, topicId, topicName });
-      
+
       const params = new URLSearchParams({
         userId,
         subject,
         topicId,
         topicName: topicName || ''
       });
-      
+
       const response = await fetch(
         `${API_BASE_URL}/api/quiz?${params.toString()}`,
         {
@@ -190,13 +190,13 @@ class ApiService {
           headers: { 'Content-Type': 'application/json' },
         }
       );
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Quiz API Error:', response.status, errorText);
         throw new Error(`Failed to fetch quiz: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       console.log('Quiz API Response:', data);
       return data;
@@ -211,7 +211,7 @@ class ApiService {
   async submitQuiz(userId, subject, topicId, answers) {
     try {
       console.log('Submitting quiz:', { userId, subject, topicId, answers });
-      
+
       const response = await fetch(`${API_BASE_URL}/api/quiz/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -222,11 +222,11 @@ class ApiService {
           answers
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to submit quiz: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Error submitting quiz:', error);
@@ -241,18 +241,18 @@ class ApiService {
         console.warn("UserId is required for fetching notifications");
         return [];
       }
-      
+
       const response = await apiClient.get(`/api/notifications/${userId}`);
       return response.data || [];
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      
+
       // Return demo notifications as fallback
       if (error.response?.status === 404) {
         console.warn("User notifications not found, returning demo data");
         return this.getDemoNotifications();
       }
-      
+
       return this.getDemoNotifications();
     }
   }
@@ -262,7 +262,7 @@ class ApiService {
       if (!notificationId) {
         throw new Error("NotificationId is required");
       }
-      
+
       const response = await apiClient.post(`/api/notifications/mark-read/${notificationId}`);
       return response.data;
     } catch (error) {
@@ -277,7 +277,7 @@ class ApiService {
       if (!userId) {
         throw new Error("UserId is required");
       }
-      
+
       const response = await apiClient.post(`/api/notifications/mark-all-read/${userId}`);
       return response.data;
     } catch (error) {
@@ -291,7 +291,7 @@ class ApiService {
       if (!notificationId) {
         throw new Error("NotificationId is required");
       }
-      
+
       const response = await apiClient.delete(`/api/notifications/${notificationId}`);
       return response.data;
     } catch (error) {
@@ -334,7 +334,7 @@ class ApiService {
   getMockStudyPlan() {
     const today = new Date();
     const dates = [];
-    
+
     // Generate 7 days of study plan
     for (let i = 0; i < 7; i++) {
       const date = new Date(today);
@@ -406,7 +406,7 @@ class ApiService {
       },
       {
         _id: '2',
-        userId: 'demo-user', 
+        userId: 'demo-user',
         type: 'Reminder',
         title: 'Daily Plan: Chemistry Sprint',
         message: 'Finish Organic Chemistry — Hydrocarbons (40 mins) + 20 MCQs.',
@@ -417,7 +417,7 @@ class ApiService {
       {
         _id: '3',
         userId: 'demo-user',
-        type: 'Alert', 
+        type: 'Alert',
         title: 'Performance Alert',
         message: 'Revise Physics: Motion, your last score was low (48%).',
         read: false,

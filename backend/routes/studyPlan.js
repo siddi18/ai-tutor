@@ -16,7 +16,7 @@ router.get("/topics/:userId", async (req, res) => {
     // Get ALL topics from ALL syllabi (not filtered by syllabus)
     const totalTopics = await Topic.countDocuments({});
     console.log(`🔢 Total topics in database: ${totalTopics}`);
-    
+
     const topics = await Topic.find({})
       .select('topic subject difficulty syllabusId')
       .limit(0)
@@ -55,8 +55,8 @@ router.get("/by-id/:studyPlanId", async (req, res) => {
 });
 
 // Get study plan for a user (returns the latest study plan) and ensure it contains ALL topics from its syllabus
-// GET /studyplan/:userId
-router.get("/:userId", async (req, res) => {
+// GET /studyplan/latest/:userId
+router.get("/latest/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -110,7 +110,7 @@ router.get("/:userId", async (req, res) => {
     const uniqueTopicIds = [...new Set(studyPlan.topics.map(t => t.topicId?._id?.toString() || t.topicId?.toString()))];
     console.log(`✅ Returning latest study plan for user ${userId}: ${studyPlan._id}`);
     console.log(`📊 Study plan has ${studyPlan.topics.length} total topics, ${uniqueTopicIds.length} unique topic IDs`);
-    
+
     res.json({ studyPlan, autoSynced: true });
   } catch (error) {
     console.error("Error fetching study plan:", error);
@@ -222,7 +222,7 @@ router.post("/complete", async (req, res) => {
     // First, find the LATEST study plan for this user
     const latestPlan = await StudyPlan.findOne({ userId })
       .sort({ createdAt: -1 });
-    
+
     if (!latestPlan) {
       console.error(`❌ No study plan found for userId=${userId}`);
       return res.status(404).json({ error: "No study plan found for this user" });
@@ -261,7 +261,7 @@ router.post("/complete", async (req, res) => {
         latestPlan.metadata = latestPlan.metadata || {};
         latestPlan.metadata.totalTopics = latestPlan.topics.length;
       } else {
-        return res.status(404).json({ 
+        return res.status(404).json({
           error: "Topic not found in study plan or database",
           availableTopics: latestPlan.topics.map(t => t.topicId?.toString()).filter(Boolean)
         });
@@ -295,20 +295,20 @@ router.post("/complete", async (req, res) => {
 router.post("/sync/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-    
+
     // Step 1: Get ALL topics from topics collection
     const allTopicsFromDB = await Topic.find({}).lean();
     console.log(`Step 1: Found ${allTopicsFromDB.length} topics in topics collection`);
-    
+
     // Step 2: Find user's study plan
     const userStudyPlan = await StudyPlan.findOne({ userId }).sort({ createdAt: -1 });
-    
+
     if (!userStudyPlan) {
       return res.status(404).json({ error: "No study plan found" });
     }
-    
+
     console.log(`Step 2: Found study plan with ${userStudyPlan.topics.length} topics before sync`);
-    
+
     // Step 3: Build new topics array with ALL topics
     const newTopicsArray = [];
     for (let i = 0; i < allTopicsFromDB.length; i++) {
@@ -325,27 +325,27 @@ router.post("/sync/:userId", async (req, res) => {
         resources: []
       });
     }
-    
+
     console.log(`Step 3: Built new array with ${newTopicsArray.length} topics`);
-    
+
     // Step 4: Replace and save
     userStudyPlan.topics = newTopicsArray;
     userStudyPlan.markModified('topics');
     const saved = await userStudyPlan.save();
-    
+
     console.log(`Step 4: Saved! Study plan now has ${saved.topics.length} topics`);
-    
+
     // Step 5: Verify by re-fetching
     const verified = await StudyPlan.findById(userStudyPlan._id).lean();
     console.log(`Step 5: Verified - database shows ${verified.topics.length} topics`);
-    
+
     res.json({
       success: true,
       topicsInCollection: allTopicsFromDB.length,
       topicsInStudyPlan: verified.topics.length,
       matched: allTopicsFromDB.length === verified.topics.length
     });
-    
+
   } catch (error) {
     console.error("Sync error:", error);
     res.status(500).json({ error: error.message, stack: error.stack });
@@ -360,7 +360,7 @@ router.get("/topic-count", async (req, res) => {
     const allTopics = await Topic.find({})
       .select('_id topic subject syllabusId')
       .lean();
-    
+
     const bySyllabus = {};
     allTopics.forEach(t => {
       const syllabusId = t.syllabusId?.toString() || 'none';
@@ -405,18 +405,18 @@ router.post("/fix/:userId", async (req, res) => {
 
     // Try multiple ways to get ALL topics - explicitly set no limit
     console.log(`🔍 Attempting to fetch ALL topics with Topic.find({}).limit(0)...`);
-    
+
     const allTopics = await Topic.find({})
       .select('_id topic subject difficulty syllabusId')
       .limit(0) // 0 means no limit in Mongoose
       .lean();
-    
+
     console.log(`📚 Query returned ${allTopics.length} topics (should match ${totalCount})`);
-    
+
     if (allTopics.length < totalCount) {
       console.error(`⚠️ MISMATCH: Query returned ${allTopics.length} but database has ${totalCount} topics!`);
       console.log(`🔧 Trying without .lean() and .select()...`);
-      
+
       const allTopicsRaw = await Topic.find({}).limit(0);
       console.log(`📚 Raw query returned ${allTopicsRaw.length} topics`);
     }
@@ -428,7 +428,7 @@ router.post("/fix/:userId", async (req, res) => {
     console.log(`📚 Retrieved ${allTopics.length} topics from database`);
     console.log(`📚 First 5 topics:`, allTopics.slice(0, 5).map(t => ({ id: t._id.toString(), name: t.topic })));
     console.log(`📚 Last 5 topics:`, allTopics.slice(-5).map(t => ({ id: t._id.toString(), name: t.topic })));
-    
+
     // Group by syllabus to see distribution
     const bySyllabus = {};
     allTopics.forEach(t => {
@@ -477,10 +477,10 @@ router.post("/fix/:userId", async (req, res) => {
     });
 
     console.log(`📝 Study plan object before save - topics count: ${newStudyPlan.topics.length}`);
-    
+
     // Mark topics array as modified to ensure Mongoose saves it
     newStudyPlan.markModified('topics');
-    
+
     await newStudyPlan.save();
     console.log(`💾 NEW study plan saved: ${newStudyPlan._id}`);
     console.log(`💾 After save - topics count: ${newStudyPlan.topics.length}`);
@@ -498,7 +498,7 @@ router.post("/fix/:userId", async (req, res) => {
     const uniqueNewIds = [...new Set(verifyPlan.topics.map(t => t.topicId.toString()))];
     console.log(`✅ NEW study plan verified: ${uniqueNewIds.length} unique topic IDs out of ${verifyPlan.topics.length} total`);
 
-    res.json({ 
+    res.json({
       message: "New study plan created successfully with all topics",
       oldStudyPlanId: oldStudyPlan._id.toString(),
       newStudyPlanId: newStudyPlan._id.toString(),
@@ -524,7 +524,7 @@ router.post("/pending", async (req, res) => {
     // First, find the LATEST study plan for this user
     const latestPlan = await StudyPlan.findOne({ userId })
       .sort({ createdAt: -1 });
-    
+
     if (!latestPlan) {
       console.error(`❌ No study plan found for userId=${userId}`);
       return res.status(404).json({ error: "No study plan found for this user" });
@@ -534,13 +534,13 @@ router.post("/pending", async (req, res) => {
     console.log(`📊 Study plan has ${latestPlan.topics.length} topics`);
 
     // Check if this topic exists in the study plan
-    const topicExists = latestPlan.topics.some(t => 
+    const topicExists = latestPlan.topics.some(t =>
       t.topicId && t.topicId.toString() === topicId.toString()
     );
 
     if (!topicExists) {
       console.error(`❌ Topic ${topicId} not found in study plan ${latestPlan._id}`);
-      return res.status(404).json({ 
+      return res.status(404).json({
         error: "Topic not found in study plan",
         availableTopics: latestPlan.topics.map(t => t.topicId?.toString()).filter(Boolean)
       });
