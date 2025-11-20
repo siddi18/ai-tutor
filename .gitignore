@@ -24,8 +24,7 @@ frontend/build/
 .vscode/
 .idea/
 
-# Uploads / temp files
-uploads/
+
 *.log
 
 # Environment & Secrets
