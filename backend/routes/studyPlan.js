@@ -1,6 +1,8 @@
 const express = require("express");
 const StudyPlan = require("../models/StudyPlan");
 const Topic = require("../models/Topic");
+const Syllabus = require("../models/Syllabus");
+const { generateRAGStudyPlan } = require("../services/studyPlanService");
 const router = express.Router();
 
 // IMPORTANT: Specific routes MUST come before parameterized routes to avoid conflicts
@@ -539,6 +541,123 @@ router.post("/pending", async (req, res) => {
     res.json({ message: "Topic marked as pending", plan: latestPlan });
   } catch (error) {
     console.error("❌ Error updating topic:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Regenerate study plan using RAG
+// POST /studyplan/regenerate/:userId/:syllabusId
+router.post("/regenerate/:userId/:syllabusId", async (req, res) => {
+  try {
+    const { userId, syllabusId } = req.params;
+    const { studyHoursPerDay, totalDays, difficulty } = req.body;
+
+    console.log(`🔄 Regenerating study plan for user ${userId}, syllabus ${syllabusId}`);
+
+    // Find existing syllabus and topics
+    const syllabus = await Syllabus.findById(syllabusId);
+    if (!syllabus) {
+      return res.status(404).json({ error: "Syllabus not found" });
+    }
+
+    const topics = await Topic.find({ syllabusId: syllabusId });
+    if (!topics || topics.length === 0) {
+      return res.status(404).json({ error: "No topics found for this syllabus" });
+    }
+
+    // Extract topic names
+    const topicNames = topics.map(t => t.topic);
+    const className = syllabus.class;
+    const subject = Object.keys(syllabus.subjects)[0]; // Get first subject
+
+    // Generate new RAG-based study plan
+    const ragStudyPlan = await generateRAGStudyPlan(
+      topicNames,
+      className,
+      subject,
+      {
+        studyHoursPerDay: studyHoursPerDay || 2,
+        totalDays: totalDays || 30,
+        difficulty: difficulty || "medium"
+      }
+    );
+
+    console.log(`📚 Total topics available: ${topics.length}`);
+
+    // IMPORTANT: Ignore RAG completely and add ALL topics
+    const formattedPlan = {
+      topics: topics.map((doc, index) => ({
+        topicId: doc._id,
+        status: "pending",
+        allocatedTime: {
+          minutes: 60,
+          formatted: "1h"
+        },
+        scheduledDay: Math.floor(index / 2) + 1,
+        difficulty: doc.difficulty || "medium",
+        learningObjectives: [],
+        resources: []
+      })),
+      schedule: {
+        totalDays: Math.ceil(topics.length / 2),
+        studyHoursPerDay: 2,
+        dailySchedule: {}
+      },
+      studyTips: ragStudyPlan.studyTips || [],
+      revisionSchedule: ragStudyPlan.revisionSchedule || {},
+      metadata: {
+        totalTopics: topics.length,
+        generatedAt: new Date()
+      }
+    };
+
+    console.log(`✅ Study plan rebuilt with ALL ${formattedPlan.topics.length} topics`);
+
+    // Update or create study plan
+    let studyPlan = await StudyPlan.findOne({ userId, syllabusId });
+    
+    if (studyPlan) {
+      // Update existing plan
+      studyPlan.topics = formattedPlan.topics;
+      studyPlan.schedule = formattedPlan.schedule;
+      studyPlan.studyTips = formattedPlan.studyTips;
+      studyPlan.revisionSchedule = formattedPlan.revisionSchedule;
+      studyPlan.metadata = {
+        ...formattedPlan.metadata,
+        totalTopics: formattedPlan.topics.length
+      };
+      await studyPlan.save();
+      console.log(`✅ Study plan updated with ${studyPlan.topics.length} topics`);
+    } else {
+      // Create new plan
+      studyPlan = new StudyPlan({
+        userId,
+        syllabusId,
+        topics: formattedPlan.topics,
+        schedule: formattedPlan.schedule,
+        studyTips: formattedPlan.studyTips,
+        revisionSchedule: formattedPlan.revisionSchedule,
+        metadata: {
+          ...formattedPlan.metadata,
+          totalTopics: formattedPlan.topics.length
+        },
+      });
+      await studyPlan.save();
+      console.log(`✅ New study plan created with ${studyPlan.topics.length} topics`);
+    }
+
+    res.json({
+      status: "success",
+      message: "Study plan regenerated using RAG",
+      studyPlanId: studyPlan._id,
+      schedule: ragStudyPlan.dailySchedule,
+      studyTips: ragStudyPlan.studyTips,
+      revisionSchedule: ragStudyPlan.revisionSchedule,
+      knowledgeBaseReferences: ragStudyPlan.metadata?.knowledgeBaseReferences || 0
+    });
+
+  } catch (error) {
+    console.error("❌ Error regenerating study plan:", error);
     res.status(500).json({ error: error.message });
   }
 });
