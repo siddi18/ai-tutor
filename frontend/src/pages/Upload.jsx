@@ -53,7 +53,7 @@ export default function Upload() {
 
         // Simulate any other initial page loading tasks
         await new Promise(resolve => setTimeout(resolve, 500)); // Simulate loading time
-        
+
       } catch (error) {
         console.error("Error during page loading:", error);
       } finally {
@@ -104,7 +104,7 @@ export default function Upload() {
       const response = await fetch('/class11_biology_syllabus.pdf');
       const blob = await response.blob();
       const file = new File([blob], 'class11_biology_syllabus.pdf', { type: 'application/pdf' });
-      
+
       const fileData = {
         fileObject: file,
         name: file.name,
@@ -151,13 +151,11 @@ export default function Upload() {
     const formData = new FormData();
     formData.append("file", file.fileObject);
 
-    // Auto-detect API URL
- 
-    const API_URL ="https://ai-tutor-1k05.onrender.com/api"
+    const API_URL = "https://ai-tutor-1k05.onrender.com/api"
 
     try {
       console.log("Uploading to:", `${API_URL}/upload-syllabus/${userId}`);
-      
+
       const response = await fetch(
         `${API_URL}/upload-syllabus/${userId}`,
         {
@@ -173,7 +171,7 @@ export default function Upload() {
         console.error("Server response:", errorText);
         throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       console.log("Actual response from backend:", data);
 
@@ -185,16 +183,16 @@ export default function Upload() {
           class: data.class,
           subjects: data.subjects,
         };
-      } 
+      }
       else if (data && data.class && data.subject && Array.isArray(data.topics)) {
         console.log("Detected single-subject format. Converting for preview.");
         syllabus = {
           class: data.class,
           subjects: {
-            [data.subject]: data.topics 
+            [data.subject]: data.topics
           },
         };
-      } 
+      }
       else {
         throw new Error("The parsed data from the backend is not in a recognized format.");
       }
@@ -227,7 +225,7 @@ export default function Upload() {
         userId: userId,
         apiUrl: API_URL
       });
-      
+
       // Better error messages for common issues
       let errorMessage = err.message;
       if (err.message.includes('status: 500')) {
@@ -243,7 +241,7 @@ export default function Upload() {
       } else if (err.message.includes('HTTP error')) {
         errorMessage = `Server error (${err.message}). The parser service might be unavailable on Render. Wait 60 seconds and retry.`;
       }
-      
+
       setError(`❌ ${errorMessage}`);
       setIsUploading(false);
     }
@@ -395,22 +393,20 @@ export default function Upload() {
                     <button
                       onClick={handleUpload}
                       disabled={isUploading}
-                      className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold shadow-md flex items-center gap-1 sm:gap-2 transition-all duration-300 ${
-                        isUploading
+                      className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold shadow-md flex items-center gap-1 sm:gap-2 transition-all duration-300 ${isUploading
                           ? "bg-gray-300 text-white cursor-not-allowed"
                           : "bg-gradient-to-r from-indigo-500 to-blue-500 text-white hover:shadow-lg hover:scale-105"
-                      }`}
+                        }`}
                     >
                       ⬆ {isUploading ? "Uploading..." : "Upload"}
                     </button>
                     <button
                       onClick={removeFile}
                       disabled={isUploading}
-                      className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold shadow-md flex items-center gap-1 sm:gap-2 transition-all duration-300 ${
-                        isUploading
+                      className={`px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold shadow-md flex items-center gap-1 sm:gap-2 transition-all duration-300 ${isUploading
                           ? "bg-gray-200 text-white cursor-not-allowed"
                           : "bg-gradient-to-r from-red-500 to-pink-500 text-white hover:shadow-lg hover:scale-105"
-                      }`}
+                        }`}
                     >
                       ❌ Remove
                     </button>
@@ -429,7 +425,7 @@ export default function Upload() {
             </div>
           </div>
         </div>
-        
+
         {/* Preview Section - Updated with Four Boxes */}
         {showPreview && parsedSyllabus && (
           <div className="mt-6 sm:mt-8 md:mt-12 p-4 sm:p-6 md:p-8 bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30">
@@ -442,7 +438,7 @@ export default function Upload() {
                 )}
               </div>
             </div>
-            
+
             {/* Four subject boxes in a 2x2 grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
               {/* Physics Box */}
