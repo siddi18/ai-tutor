@@ -545,9 +545,21 @@ router.post("/pending", async (req, res) => {
 
 // Get study plan by syllabus for a user (MUST be last - generic route)
 // GET /studyplan/:userId/:syllabusId
+// This route ONLY matches when both params look like valid ObjectIds
 router.get("/:userId/:syllabusId", async (req, res) => {
   try {
     const { userId, syllabusId } = req.params;
+
+    // Validate that both params are valid ObjectId strings (24 hex characters)
+    const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+    
+    if (!objectIdRegex.test(userId) || !objectIdRegex.test(syllabusId)) {
+      console.log(`⚠️ Invalid ObjectId format: userId=${userId}, syllabusId=${syllabusId}`);
+      return res.status(400).json({ 
+        error: "Invalid request",
+        message: "Both userId and syllabusId must be valid ObjectIds"
+      });
+    }
 
     if (!userId || !syllabusId) {
       return res.status(400).json({ error: "userId and syllabusId are required" });
